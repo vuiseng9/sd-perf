@@ -98,7 +98,7 @@ model_params = OrderedDict()
 csv_path = os.path.join(ovir_folder, "weight_dist.csv")
 
 with open(csv_path, "w") as outfile:
-    outfile.write("layer,dtype,shape,numel,sparsity,special_val_ratio,top1_val_ratio,top1_val\n")
+    outfile.write("layer,dtype,w_ndim,shape,numel,sparsity,special_val_ratio,top1_val_ratio,top1_val\n")
 
     # for op in tqdm(ir_model.get_ordered_ops()):
     for op in ir_model.get_ordered_ops():
@@ -122,6 +122,7 @@ with open(csv_path, "w") as outfile:
                 # print(f"{layer:30} | {attr['q_dtype']} ({q_mode:>5}) | orig. shape: {str(attr['original_shape']):15} | numel: {statdict['numel']:>15,} | sparsity: {statdict['sparsity']:.2f} | special ratio: {statdict['special_value_ratio']:.2f} | top1 ratio: {statdict['top1'][1]:.2f} ({is_top1_zero_point:>10}) |")
                 print(f"{layer:30} | {q_dtype} | orig. shape: {str(shape):20} | numel: {statdict['numel']:>15,} | sparsity: {statdict['sparsity']:.2f} | special ratio: {statdict['special_value_ratio']:.2f} | top1 ratio: {statdict['top1'][1]:.2f} (val: {statdict['top1'][0]})")
                 
-                outfile.write(f"{layer:>25},{q_dtype},{str(shape):20},{statdict['numel']:>15},{statdict['sparsity']:.4f},{statdict['special_value_ratio']:.4f},{statdict['top1'][1]:.4f},{statdict['top1'][0]}\n")
+                shape_str = str(shape).replace(", "," x ")
+                outfile.write(f"{layer:>25},{q_dtype},{len(shape)},{shape_str:20},{statdict['numel']:>15},{statdict['sparsity']:.4f},{statdict['special_value_ratio']:.4f},{statdict['top1'][1]:.4f},{statdict['top1'][0]}\n")
 
 print('Done!')
